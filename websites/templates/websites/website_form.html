@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+    {% block content %}
+    <div class="row">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-8">
+            <div class="table-responsive">
+                <table class="table">
+                  <thead class="thead-dark">
+                    <tr>
+                      <th scope="col">Date</th>
+                      <th scope="col">{{ website.name|upper }}</th>
+                      <th scope="col">
+                        <form action="." method="post" id="manage_form" data-website="{{ website.id }}">{% csrf_token %}
+                            {{ form|crispy}}
+                            {% if has_running_update %}
+                                <button type="button" class="btn btn-outline-success my-2 my-sm-0" id="id_start" data-url="{% url 'websites:update' %}" disabled="disabled">Update</button>
+                                <button type="button" class="btn btn-outline-success my-2 my-sm-0" id="id_refresh">Refresh</button>
+                                <button type="button" class="btn btn-outline-success my-2 my-sm-0" id="id_stop" data-url="{% url 'websites:update_stop' %}">Stop</button>
+                            {% else %}
+                                <button type="button" class="btn btn-outline-success my-2 my-sm-0" id="id_start" data-url="{% url 'websites:update' %}">Update</button>
+
+                            {% endif %}
+                        </form>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for update in object.update_set.all %}
+                        <tr>
+                          <th scope="row">{{ update.created }}</th>
+                          <td colspan="2" class="text-left">
+                            <strong>Current Status</strong>: {{ update.status }}</br>
+                            <strong>Current Stage</strong>: {{ update.current_stage }}</br>
+                            <strong>Total Categories Number</strong>: {{ update.total_category_number }}</br>
+                            <strong>Total Pages Number</strong>: {{ update.total_pages_number }}</br>
+                            <strong>Total Ads Number</strong>: {{ total_ads_number }}</br>
+                            <strong>Updated Ads Number</strong>: {{ update.update_number }}</br>
+                          </td>
+                        </tr>
+                    {% endfor %}
+                    <tr>
+                      <th scope="row"></th>
+                      <td colspan="2"></td>
+                    </tr>
+                  </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-2">
+        </div>
+    </div>
+    {% endblock %}
+    {% block scripts %}
+        <script type="text/javascript" src="{% static "js/djangoajaxcalls.js" %}"></script>
+        <script type="text/javascript" src="{% static "js/manage.js" %}"></script>
+    {% endblock scripts %}
